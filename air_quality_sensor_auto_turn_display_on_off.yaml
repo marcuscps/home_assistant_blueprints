@@ -1,0 +1,46 @@
+blueprint:
+  name: Air Quality - Screen Auto On/Off
+  description: Air Quality - Turn on display when quality is inadequate
+  domain: automation
+  input:
+    sensor:
+      name: "Air Quality Sensor"
+      description: "The air quality sensor"
+      selector:
+        entity:
+          filter:
+            - domain: sensor
+    switch:
+      name: "Screen switch"
+      description: "The switch that controls the screen"
+      selector:
+        entity:
+          filter:
+            - domain: switch
+mode: single
+triggers:
+  - trigger: state
+    entity_id:
+      - !input sensor
+conditions: []
+actions:
+  - if:
+      - condition: state
+        entity_id: !input sensor
+        state:
+          - extremely_poor
+          - very_poor
+          - poor
+          - moderate
+    then:
+      - action: switch.turn_on
+        metadata: {}
+        target:
+          entity_id: !input switch
+        data: {}
+    else:
+      - action: switch.turn_off
+        metadata: {}
+        target:
+          entity_id: !input switch
+        data: {}
